@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes');
@@ -8,6 +9,7 @@ const tripRoutes = require('./routes/tripRoutes');
 
 const app = express();
 app.use(express.json());  // Middleware para procesar JSON
+app.use(cors());  // Middleware para permitir peticiones desde otros dominios
 
 // Función para conectar a MongoDB
 const connectDB = async () => {
