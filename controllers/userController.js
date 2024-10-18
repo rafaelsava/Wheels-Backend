@@ -143,7 +143,7 @@ const getUserProfile = async (req, res) => {
 
   try {
     // Buscar al usuario en la base de datos
-    const user = await User.findById(userId).select('name lastName _id mail contactNumber');
+    const user = await User.findById(userId).select('name lastName _id mail contactNumber image');
     
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado', code: 404 });
@@ -155,7 +155,8 @@ const getUserProfile = async (req, res) => {
       name: user.name,
       lastName: user.lastName,
       mail: user.mail,
-      contactNumber: user.contactNumber
+      contactNumber: user.contactNumber,
+      image: user.image
     });
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener el perfil del usuario', code: 500 });
