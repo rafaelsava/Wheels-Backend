@@ -2,8 +2,7 @@ const User = require('../models/userModel');
 
 // Agregar información del vehículo
 const addVehicle = async (req, res) => {
-  const { brand, model, carPlate, capacity, color, picture, soat } = req.body;
-  const userId = req.user.id;  // El ID del usuario autenticado proviene del token
+  const { brand, model, carPlate, capacity, color, picture, soat,userId } = req.body;
 
   try {
     // Validar que todos los campos requeridos estén presentes

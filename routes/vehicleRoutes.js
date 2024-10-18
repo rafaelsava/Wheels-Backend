@@ -5,7 +5,7 @@ const { addVehicle ,getVehicleDetails, updateVehicleDetails} = require('../contr
 const router = express.Router();
 
 // Ruta para agregar vehículo, protegida por autenticación
-router.post('/vehicle', authenticateToken, addVehicle);
+router.post('/vehicle', addVehicle);
 router.get('/vehicle', authenticateToken, getVehicleDetails);
 router.put('/vehicle', authenticateToken, updateVehicleDetails);
 
