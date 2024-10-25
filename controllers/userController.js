@@ -106,14 +106,15 @@ const loginUser = async (req, res) => {
 
 // Actualizar perfil del usuario
 const updateUserProfile = async (req, res) => {
-  const { name, lastName, contactNumber } = req.body;
+  const { name, lastName, contactNumber, image } = req.body;  // Agregar 'image' al cuerpo de la solicitud
   const userId = req.user.id;  // El ID del usuario autenticado proviene del token
+
   // Validar si falta algún dato en el body
-  if (!name || !lastName || !contactNumber) {
+  if (!name || !lastName || !contactNumber || !image) {
     return res.status(400).json({ error: 'Faltan datos en el cuerpo de la solicitud', code: 400 });
   }
-  try {
 
+  try {
     // Validar formato del número de contacto (10 dígitos)
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(contactNumber)) {
@@ -124,7 +125,8 @@ const updateUserProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(userId, {
       name,
       lastName,
-      contactNumber
+      contactNumber,
+      image  // Actualizar la imagen del usuario
     }, { new: true });
 
     if (!updatedUser) {
@@ -136,6 +138,7 @@ const updateUserProfile = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar el perfil', code: 500 });
   }
 };
+
 
 // Ver perfil del usuario
 const getUserProfile = async (req, res) => {
