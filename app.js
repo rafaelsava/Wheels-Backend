@@ -6,6 +6,7 @@ require('dotenv').config();
 const userRoutes = require('./routes/userRoutes');
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const tripRoutes = require('./routes/tripRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 app.use(express.json());  // Middleware para procesar JSON
@@ -30,6 +31,7 @@ connectDB();
 app.use('/api', userRoutes);
 app.use('/api', vehicleRoutes);
 app.use('/api', tripRoutes);
+app.use('/api', authRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
