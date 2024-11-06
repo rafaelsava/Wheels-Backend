@@ -97,7 +97,8 @@ const loginUser = async (req, res) => {
     // Retornar el token en la respuesta
     res.status(200).json({
       message: 'Inicio de sesión exitoso',
-      token: token
+      token: token,
+      userId: user._id
     });
   } catch (error) {
     res.status(500).json({ error:error, code: 500 });
