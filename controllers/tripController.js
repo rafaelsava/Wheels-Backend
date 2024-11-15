@@ -51,26 +51,32 @@ const createTrip = async (req, res) => {
 };
 
 const getAvailableTrips = async (req, res) => {
-    try {
-      // Obtener todos los viajes
-      const trips = await Trip.find();
-  
-      // Filtrar los viajes que tengan al menos un cupo disponible
-      const availableTrips = trips.map(trip => ({
-        tripId: trip._id,
-        initialPoint: trip.initialPoint,
-        finalPoint: trip.finalPoint,
-        route: trip.route,
-        hour: trip.hour,
-        seatsAvailable: trip.seats,  // Asientos disponibles
-        price: trip.price
-      }));
-  
-      res.status(200).json({ trips: availableTrips });
-    } catch (error) {
-      res.status(500).json({ error: 'No se pudieron obtener los viajes disponibles.', code: 500 });
-    }
-  };
+  const userId = req.user.id;  // Obtener el userId del token JWT
+
+  try {
+    // Obtener todos los viajes que tengan al menos un cupo disponible y en los que el conductor no sea el usuario autenticado
+    const trips = await Trip.find({ 
+      seats: { $gt: 0 },  // Filtrar viajes con cupos disponibles
+      idDriverTrip: { $ne: userId }  // Excluir viajes del usuario autenticado como conductor
+    });
+
+    // Mapear los datos para la respuesta
+    const availableTrips = trips.map(trip => ({
+      tripId: trip._id,
+      initialPoint: trip.initialPoint,
+      finalPoint: trip.finalPoint,
+      route: trip.route,
+      hour: trip.hour,
+      seatsAvailable: trip.seats,
+      price: trip.price
+    }));
+
+    res.status(200).json({ trips: availableTrips });
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudieron obtener los viajes disponibles.', code: 500 });
+  }
+};
+
 // Obtener los detalles de un viaje específico
 const getTripDetails = async (req, res) => {
     const { tripId } = req.params;
@@ -299,15 +305,20 @@ const getDriverTrips = async (req, res) => {
       return res.status(200).json({ message: 'No tienes viajes registrados.' });
     }
 
-    // Formatear la respuesta para mostrar solo los detalles necesarios (sin la hora)
-    const driverTrips = trips.map(trip => ({
-      tripId: trip._id,
-      initialPoint: trip.initialPoint,
-      finalPoint: trip.finalPoint,
-      route: trip.route,
-      seats: trip.seats,
-      price: trip.price
-    }));
+    // Formatear la respuesta para mostrar solo los detalles necesarios, incluyendo el número total de cupos reservados
+    const driverTrips = trips.map(trip => {
+      const totalReservedSeats = trip.passengers.reduce((acc, passenger) => acc + passenger.stops.length, 0);
+      
+      return {
+        tripId: trip._id,
+        initialPoint: trip.initialPoint,
+        finalPoint: trip.finalPoint,
+        route: trip.route,
+        seats: trip.seats,
+        price: trip.price,
+        reservations: totalReservedSeats  // Número total de cupos reservados
+      };
+    });
 
     res.status(200).json({ trips: driverTrips });
   } catch (error) {
@@ -315,6 +326,8 @@ const getDriverTrips = async (req, res) => {
     console.log(error);
   }
 };
+
+
 
 // Eliminar un viaje registrado por el conductor
 const deleteTrip = async (req, res) => {
@@ -349,7 +362,7 @@ const deleteTrip = async (req, res) => {
 const editTrip = async (req, res) => {
   const { tripId } = req.params;  // Obtener el tripId de los parámetros de la URL
   const userId = req.user.id;  // Obtener el userId del token JWT
-  const { initialPoint, finalPoint, hour, seats, price } = req.body;  // Obtener los nuevos datos del viaje
+  const { initialPoint, finalPoint, route,hour, seats, price } = req.body;  // Obtener los nuevos datos del viaje
 
   try {
     // Buscar el viaje en la base de datos
@@ -366,6 +379,7 @@ const editTrip = async (req, res) => {
     // Actualizar los detalles del viaje con los nuevos datos proporcionados
     if (initialPoint) trip.initialPoint = initialPoint;
     if (finalPoint) trip.finalPoint = finalPoint;
+    if(route) trip.route = route;
     if (hour) trip.hour = hour;
     if (seats) trip.seats = seats;
     if (price) trip.price = price;
