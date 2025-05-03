@@ -1,5 +1,6 @@
 const Trip = require('../models/tripModel');
 const User = require('../models/userModel');
+const { v4: uuidv4 } = require('uuid'); // Import UUID v4
 
 // Crear un nuevo viaje
 const createTrip = async (req, res) => {
@@ -9,12 +10,14 @@ const createTrip = async (req, res) => {
   try {
     // Verificar si el usuario es un conductor
     const user = await User.findById(driverId);
-    if (!user || !user.isDriver) {
-      return res.status(403).json({ error: 'No tienes permisos para crear un viaje. Debes ser conductor.', code: 403 });
-    }
+
     // Validar que todos los campos requeridos estén presentes
     if (!initialPoint || !finalPoint || !route || !hour || !seats || !price) {
       return res.status(400).json({ error: 'Información del viaje inválida.', code: 400 });
+    }
+
+    if (!user || !user.isDriver) {
+      return res.status(403).json({ error: 'No tienes permisos para crear un viaje. Debes ser conductor.', code: 403 });
     }
 
     // Validar que la cantidad de asientos sea un número positivo
@@ -29,6 +32,7 @@ const createTrip = async (req, res) => {
 
     // Crear el viaje y asociarlo al conductor autenticado
     const newTrip = new Trip({
+      _id: uuidv4(), // Generate a unique string ID
       initialPoint,
       finalPoint,
       route,
@@ -39,6 +43,7 @@ const createTrip = async (req, res) => {
     });
 
     await newTrip.save();
+    console.log(newTrip._id)
 
     res.status(201).json({
       message: 'Viaje registrado exitosamente.',
@@ -166,6 +171,7 @@ const getTripDetails = async (req, res) => {
   
     try {
       // Buscar el viaje en la base de datos
+      console.log(tripId)
       const trip = await Trip.findById(tripId);
       if (!trip) {
         return res.status(404).json({ error: 'Viaje no encontrado.', code: 404 });

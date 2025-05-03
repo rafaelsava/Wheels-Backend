@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const tripSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
   initialPoint: { type: String, required: true },
   finalPoint: { type: String, required: true },
   route: { type: String, required: true },
