@@ -24,17 +24,19 @@ const registerUser = async (req, res) => {
   }
 
   try {
+    
+    // Validar la complejidad de la contraseña
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ error: 'Contraseña inválida. Debe incluir al menos 1 carácter especial, 1 letra, 1 número y tener un mínimo de 8 caracteres.', code: 400 });
+    }    
     // Verificar si el correo o el ID ya están registrados
     const existingUser = await User.findOne({ $or: [{ mail }, { _id: id }] });
     if (existingUser) {
       return res.status(400).json({ error: 'Correo o ID ya registrado', code: 400 });
     }
 
-    // Validar la complejidad de la contraseña
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({ error: 'Contraseña inválida. Debe incluir al menos 1 carácter especial, 1 letra, 1 número y tener un mínimo de 8 caracteres.', code: 400 });
-    }
+
 
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
