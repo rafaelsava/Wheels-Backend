@@ -15,7 +15,7 @@ app.use(cors());  // Middleware para permitir peticiones desde otros dominios
 // Función para conectar a MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect("mongodb://localhost:27017/mydb", { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('Conectado a la base de datos MongoDB');
   } catch (err) {
     console.error('Error conectando a la base de datos', err);
