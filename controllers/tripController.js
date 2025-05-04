@@ -43,7 +43,6 @@ const createTrip = async (req, res) => {
     });
 
     await newTrip.save();
-    console.log(newTrip._id)
 
     res.status(201).json({
       message: 'Viaje registrado exitosamente.',
@@ -171,7 +170,6 @@ const getTripDetails = async (req, res) => {
   
     try {
       // Buscar el viaje en la base de datos
-      console.log(tripId)
       const trip = await Trip.findById(tripId);
       if (!trip) {
         return res.status(404).json({ error: 'Viaje no encontrado.', code: 404 });
