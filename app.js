@@ -26,7 +26,10 @@ const connectDB = async () => {
 // Conectar a la base de datos
 connectDB();
 
-
+// Ruta principal
+app.get('/api', (req, res) => {
+  res.status(200).send('API is running successfully');
+});
 // Usar las rutas de usuario
 app.use('/api', userRoutes);
 app.use('/api', vehicleRoutes);

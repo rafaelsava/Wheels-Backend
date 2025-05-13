@@ -1,0 +1,2327 @@
+{
+	"info": {
+		"_postman_id": "a641a5f6-b058-4cb0-a199-bc9d909eabe8",
+		"name": "All API Test",
+		"description": "Colección detallada para probar las rutas del módulo de usuarios con validaciones avanzadas.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38339027"
+	},
+	"item": [
+		{
+			"name": "POST Register - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response contains userId\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.userId).to.exist;",
+							"    pm.expect(response.userId).to.equal(\"123e4567-e89b-12d3-a456-426614174000\");",
+							"    pm.environment.set(\"userId\", response.userId);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Registro completado exitosamente.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n  \"name\": \"TestUser\",\n  \"lastName\": \"TestLastName\",\n  \"mail\": \"test@example.com\",\n  \"password\": \"Test123!@\",\n  \"contactNumber\": \"1234567890\",\n  \"image\": \"https://example.com/image.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Register - Duplicate Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for duplicate email\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Correo o ID ya registrado\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"987fcdeb-12ab-34cd-56ef-426614174001\",\n  \"name\": \"TestUser2\",\n  \"lastName\": \"TestLastName2\",\n  \"mail\": \"test@example.com\",\n  \"password\": \"Test456!@#\",\n  \"contactNumber\": \"0987654321\",\n  \"image\": \"https://example.com/image2.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Register - Invalid Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for invalid password\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Contraseña inválida. Debe incluir al menos 1 carácter especial, 1 letra, 1 número y tener un mínimo de 8 caracteres.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"987fcdeb-12ab-34cd-56ef-426614174002\",\n  \"name\": \"TestUser3\",\n  \"lastName\": \"TestLastName3\",\n  \"mail\": \"test3@example.com\",\n  \"password\": \"test123\", // Sin carácter especial\n  \"contactNumber\": \"1234567890\",\n  \"image\": \"https://example.com/image3.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Register - Missing Field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for missing field\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Faltan datos en el cuerpo de la solicitud\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"987fcdeb-12ab-34cd-56ef-426614174003\",\n  \"lastName\": \"TestLastName4\",\n  \"mail\": \"test4@example.com\",\n  \"password\": \"Test456!@#\",\n  \"contactNumber\": \"1234567890\",\n  \"image\": \"https://example.com/image4.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Login - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains token and userId\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.token).to.exist;",
+							"    pm.expect(response.userId).to.equal(\"123e4567-e89b-12d3-a456-426614174000\");",
+							"    pm.environment.set(\"jwtToken\", response.token);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Inicio de sesión exitoso\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"mail\": \"test@example.com\",\n  \"password\": \"Test123!@\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Login - Wrong Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Error message for incorrect credentials\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Correo o contraseña incorrectos\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"mail\": \"test@example.com\",\n  \"password\": \"WrongPass123!@\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Login - Unregistered Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Error message for incorrect credentials\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Correo o contraseña incorrectos\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"mail\": \"notfound@example.com\",\n  \"password\": \"Test123!@\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Login - Invalid Email Format",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for invalid email\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Correo electrónico inválido\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"mail\": \"invalid-email\",\n  \"password\": \"Test123!@\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Profile - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Perfil actualizado exitosamente.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"UpdatedUser\",\n  \"lastName\": \"UpdatedLastName\",\n  \"contactNumber\": \"0987654321\",\n  \"image\": \"https://example.com/updated-image.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Profile - No Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"UpdatedUser\",\n  \"lastName\": \"UpdatedLastName\",\n  \"contactNumber\": \"0987654321\",\n  \"image\": \"https://example.com/updated-image.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Profile - Missing Field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for missing field\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Faltan datos en el cuerpo de la solicitud\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"UpdatedUser\",\n  \"lastName\": \"UpdatedLastName\",\n  \"image\": \"https://example.com/updated-image.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Profile - Invalid Contact Number",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for invalid contact number\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Número de contacto no válido\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"UpdatedUser\",\n  \"lastName\": \"UpdatedLastName\",\n  \"contactNumber\": \"12345\", // Menos de 10 dígitos\n  \"image\": \"https://example.com/updated-image.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Profile - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains user details\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.userId).to.equal(\"123e4567-e89b-12d3-a456-426614174000\");",
+							"    pm.expect(response.name).to.equal(\"UpdatedUser\");",
+							"    pm.expect(response.lastName).to.equal(\"UpdatedLastName\");",
+							"    pm.expect(response.mail).to.equal(\"test@example.com\");",
+							"    pm.expect(response.contactNumber).to.equal(\"0987654321\");",
+							"    pm.expect(response.image).to.equal(\"https://example.com/updated-image.jpg\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Profile - No Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Profile - Invalid Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer invalid-token",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/profile",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Vehicle - No Vehicle Registered",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Error message for no vehicle\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Vehículo no registrado\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Vehicle - No Vehicle Registered",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Error message for no vehicle\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Vehículo no registrado\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Honda\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Vehicle - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Vehículo agregado exitosamente. El rol de conductor ha sido activado.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"carPlate\": \"ABC123\",\n  \"capacity\": 5,\n  \"color\": \"Blue\",\n  \"picture\": \"https://example.com/vehicle.jpg\",\n  \"soat\": \"2025-12-31\",\n  \"userId\": \"{{userId}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Vehicle - Missing Fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for missing fields\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Información del vehículo inválida.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"carPlate\": \"ABC123\",\n  \"capacity\": 5,\n  \"color\": \"Blue\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Vehicle - Invalid Capacity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for invalid capacity\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Información del vehículo inválida.\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"carPlate\": \"ABC123\",\n  \"capacity\": 0,\n  \"color\": \"Blue\",\n  \"picture\": \"https://example.com/vehicle.jpg\",\n  \"soat\": \"2025-12-31\",\n  \"userId\": \"{{userId}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Vehicle - User Not Found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Error message for user not found\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Usuario no encontrado.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"carPlate\": \"ABC123\",\n  \"capacity\": 5,\n  \"color\": \"Blue\",\n  \"picture\": \"https://example.com/vehicle.jpg\",\n  \"soat\": \"2025-12-31\",\n  \"userId\": \"invalid-user-id\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Vehicle - Vehicle Already Registered",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for vehicle already registered\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"El usuario ya tiene un vehículo registrado.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Honda\",\n  \"model\": \"Civic\",\n  \"carPlate\": \"XYZ789\",\n  \"capacity\": 4,\n  \"color\": \"Red\",\n  \"picture\": \"https://example.com/vehicle2.jpg\",\n  \"soat\": \"2025-12-31\",\n  \"userId\": \"{{userId}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Vehicle - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains vehicle details\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.vehicle).to.exist;",
+							"    pm.expect(response.vehicle.carPlate).to.equal(\"ABC123\");",
+							"    pm.expect(response.vehicle.capacity).to.equal(5);",
+							"    pm.expect(response.vehicle.brand).to.equal(\"Toyota\");",
+							"    pm.expect(response.vehicle.model).to.equal(\"Corolla\");",
+							"    pm.expect(response.vehicle.soat).to.equal(\"2025-12-31\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Vehicle - No Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Vehicle - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message and updated vehicle\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Datos del vehículo actualizados exitosamente.\");",
+							"    pm.expect(response.vehicle.brand).to.equal(\"Honda\");",
+							"    pm.expect(response.vehicle.color).to.equal(\"Green\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Honda\",\n  \"color\": \"Green\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Vehicle - No Fields to Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for no fields\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"No hay campos para actualizar\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Vehicle - No Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"brand\": \"Honda\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vehicle",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vehicle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Driver Trips - No Trips Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains no trips message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"No tienes viajes registrados.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-trips",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response contains tripId\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.tripId).to.exist;",
+							"    pm.environment.set(\"tripId\", response.tripId);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Viaje registrado exitosamente.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"initialPoint\": \"Bogotá\",\n  \"finalPoint\": \"Medellín\",\n  \"route\": \"Autopista Norte\",\n  \"hour\": \"2025-05-06T10:00:00Z\",\n  \"seats\": 4,\n  \"price\": 50000\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip - Missing Fields Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for missing fields\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Información del viaje inválida.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"initialPoint\": \"Bogotá\",\n  \"finalPoint\": \"Medellín\",\n  \"route\": \"Autopista Norte\",\n  \"hour\": \"2025-05-06T10:00:00Z\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip - Invalid Seats Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for invalid seats\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Información del viaje inválida.\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"initialPoint\": \"Bogotá\",\n  \"finalPoint\": \"Medellín\",\n  \"route\": \"Autopista Norte\",\n  \"hour\": \"2025-05-06T10:00:00Z\",\n  \"seats\": 0,\n  \"price\": 50000\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Available Trips - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains available trips\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.trips).to.be.an('array');",
+							"    if (response.trips.length > 0) {",
+							"        pm.expect(response.trips[0].seatsAvailable).to.be.at.least(0);",
+							"    }",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trips",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Trip Details - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains trip details\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.tripId).to.equal(pm.environment.get(\"tripId\"));",
+							"    pm.expect(response.initialPoint).to.exist;",
+							"    pm.expect(response.carPlate).to.exist;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trip/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Trip Details - Trip Not Found Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Error message for trip not found\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Viaje no encontrado.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trip/invalid-trip-id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"invalid-trip-id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip Reserve - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.include(\"Has reservado 2 cupos exitosamente\");",
+							"    pm.expect(response.seatsRemaining).to.be.at.least(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 2,\n  \"stops\": [\"Stop1\", \"Stop2\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip Reserve - Missing Fields Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for missing fields\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Información de la reserva inválida.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 2\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip Reserve - Insufficient Seats Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for insufficient seats\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"No hay suficientes cupos disponibles.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 5,\n  \"stops\": [\"Stop1\", \"Stop2\", \"Stop3\", \"Stop4\", \"Stop5\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Trip Reserve - Mismatched Stops Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for mismatched stops\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"La cantidad de paradas debe coincidir con el número de asientos reservados.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 2,\n  \"stops\": [\"Stop1\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Trip Reserve - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"Reserva actualizada exitosamente.\");",
+							"    pm.expect(response.seatsRemaining).to.be.at.least(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 1,\n  \"stops\": [\"NewStop1\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Trip Reserve - No Reservation Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Error message for trip not found\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Viaje no encontrado.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 1,\n  \"stops\": [\"NewStop1\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/invalid-trip-id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"invalid-trip-id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Trip Reserve - Insufficient Seats Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for insufficient seats\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"No hay suficientes cupos disponibles para actualizar tu reserva.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 5,\n  \"stops\": [\"Stop1\", \"Stop2\", \"Stop3\", \"Stop4\", \"Stop5\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Trip Reserve - Mismatched Stops Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for mismatched stops\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"La cantidad de paradas debe coincidir con el número de asientos reservados.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"seatsReserved\": 2,\n  \"stops\": [\"Stop1\"]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Trip Reserve - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.include(\"Reserva cancelada exitosamente\");",
+							"    pm.expect(response.seatsRemaining).to.be.at.least(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Trip Reserve - No Reservation Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Error message for no reservation\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"El usuario no tiene una reserva activa en este viaje.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trip/reserve/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"reserve",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET My Reservations - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains reservations\", function () {",
+							"    const response = pm.response.json();",
+							"    if (response.reservations && response.reservations.length > 0) {",
+							"        pm.expect(response.reservations[0].tripId).to.exist;",
+							"    }",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET My Reservations - No Reservations Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains no reservations message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"No tienes viajes reservados.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-reservations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Driver Trips - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains driver trips\", function () {",
+							"    const response = pm.response.json();",
+							"    if (response.trips && response.trips.length > 0) {",
+							"        pm.expect(response.trips[0].tripId).to.exist;",
+							"    }",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-trips",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Trip - Not Authorized Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"pm.test(\"Error message for not authorized\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Token no válido\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer xd",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trip/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Trip - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"El viaje ha sido actualizado exitosamente.\");",
+							"    pm.expect(response.updatedTrip.initialPoint).to.equal(\"Cali\");",
+							"    pm.expect(response.updatedTrip.price).to.equal(60000);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"initialPoint\": \"Cali\",\n  \"price\": 60000\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Trip - Not Authorized Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"pm.test(\"Error message for not authorized\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.error).to.equal(\"Token no válido\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer xd",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"initialPoint\": \"Cali\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/trip/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Trip - Success Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains success message\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.message).to.equal(\"El viaje ha sido eliminado exitosamente.\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/trip/{{tripId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"trip",
+						"{{tripId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

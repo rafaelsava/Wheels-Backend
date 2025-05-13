@@ -1,0 +1,79 @@
+name: CI with Allure and SonarQube
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    env:
+      MONGO_URI: mongodb://localhost:27017/mydb
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Newman, JMeter, Allure
+        run: |
+          npm install -g newman
+          sudo apt-get update
+          sudo apt-get install -y jmeter
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -xzf allure-2.27.0.tgz
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - name: Start backend in background
+        run: |
+          nohup npm run dev > backend.log 2>&1 &
+          sleep 10
+
+      - name: Verify backend is up
+        run: curl --fail http://localhost:5000/api || (echo "API not responding" && exit 1)
+
+      - name: Run unit tests with coverage
+        run: npm test -- --coverage
+
+      - name: Generate Allure Report
+        run: |
+          mkdir -p allure-report
+          allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Run JMeter test
+        run: |
+          jmeter -n -t test/"HTTP Request Defaults.jmx" -l test/results.jtl -e -o test/report
+
+      - name: Run Postman tests
+        run: |
+          newman run test/FullWorkflow.postman_collection.json \
+            --environment test/Development.postman_environment.json \
+            --reporters cli,junit \
+            --reporter-junit-export test/postman.xml
+
+      - name: SonarQube Analysis
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
