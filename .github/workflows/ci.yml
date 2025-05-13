@@ -51,8 +51,16 @@ jobs:
           nohup npm run dev > backend.log 2>&1 &
           sleep 10
 
+      - name: Mostrar logs del backend si falla
+        if: failure()
+        run: cat backend.log
+
       - name: Verify backend is up
         run: curl --fail http://localhost:5000/api || (echo "API not responding" && exit 1)
+      - name: Verificar conexión a MongoDB
+        run: |
+          echo 'db.runCommand({ ping: 1 })' | mongosh mongodb://localhost:27017/mydb || (echo "❌ No se pudo conectar a MongoDB" && exit 1)
+  
 
       - name: Run unit tests with coverage
         run: npm test -- --coverage
