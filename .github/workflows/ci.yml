@@ -87,3 +87,12 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=rafaelsava_Wheels-Backend
+            -Dsonar.organization=rafaelsava
+            -Dsonar.sources=.
+            -Dsonar.tests=.
+            -Dsonar.exclusions=**/__tests__/**,**/*.test.js,**/node_modules/**
+            -Dsonar.exclusions=**/__tests__/**,**/*.test.js,**/node_modules/**
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
