@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Newman, JMeter, Allure, Mongosh
+      - name: Install Newman, JMeter, Allure
         run: |
           npm install -g newman
           wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
@@ -54,10 +54,6 @@ jobs:
 
       - name: Verify backend is up
         run: curl --fail http://localhost:5000/api || (echo "API not responding" && exit 1)
-      - name: Verificar conexión a MongoDB
-        run: |
-          echo 'db.runCommand({ ping: 1 })' | mongosh mongodb://localhost:27017/mydb || (echo "❌ No se pudo conectar a MongoDB" && exit 1)
-  
 
       - name: Run unit tests with coverage
         run: npm test -- --coverage
