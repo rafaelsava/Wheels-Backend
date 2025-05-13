@@ -66,11 +66,11 @@ jobs:
 
       - name: Run JMeter test
         run: |
-          jmeter -n -t test/"HTTP Request Defaults.jmx" -l test/results.jtl -e -o test/report
+            jmeter -n -t test/"HTTP Request Defaults.jmx" -l test/results.jtl
 
       - name: Run Postman tests
         run: |
-          newman run test/FullWorkflow.postman_collection.json \
+          newman run test\All API Test.postman_collection.json \
             --environment test/Development.postman_environment.json \
             --reporters cli,junit \
             --reporter-junit-export test/postman.xml
