@@ -20,6 +20,8 @@ jobs:
 
     env:
       MONGO_URI: mongodb://localhost:27017/mydb
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
 
     steps:
       - uses: actions/checkout@v3
