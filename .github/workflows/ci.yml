@@ -70,7 +70,7 @@ jobs:
 
       - name: Run Postman tests
         run: |
-          newman run test\All API Test.postman_collection.json \
+          newman run test/All API Test.postman_collection.json \
             --environment test/Development.postman_environment.json \
             --reporters cli,junit \
             --reporter-junit-export test/postman.xml
