@@ -111,3 +111,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
+      - name: Deploy to Vercel (Production)
+        if: ${{ success() }}
+        run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+
+
