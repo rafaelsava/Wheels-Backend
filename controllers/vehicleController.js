@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 
+
 // Agregar información del vehículo
 const addVehicle = async (req, res) => {
   const { brand, model, carPlate, capacity, color, picture, soat,userId } = req.body;

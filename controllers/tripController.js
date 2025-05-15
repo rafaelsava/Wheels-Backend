@@ -1,5 +1,6 @@
 const Trip = require('../models/tripModel');
 const User = require('../models/userModel');
+
 const { v4: uuidv4 } = require('uuid'); // Import UUID v4
 
 // Crear un nuevo viaje
