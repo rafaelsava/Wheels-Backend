@@ -41,6 +41,7 @@ jobs:
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
+          npm install -g vercel
           wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xzf apache-jmeter-5.6.3.tgz
           sudo mv apache-jmeter-5.6.3 /opt/apache-jmeter-5.6.3
